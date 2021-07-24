@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>为何需要观察者模式</title>
+</head>
+<body>
+    <div>
+        <h2>
+            命令式
+        </h2>
+        <button id="btn1">
+            按钮1-命令式-派发一个值
+        </button>
+        <ul id="ul1">
+            展现列表-命令式
+        </ul>
+    </div>
+
+    <div>
+        <h2>
+            观察者模式
+        </h2>
+        <button id="btn2">
+            按钮2-观察者模式-派发一个值
+        </button>
+        <ul id="ul2">
+            展现列表-观察者模式
+        </ul>
+
+    </div>
+</body>
+<script type="text/javascript">
+    /**
+     * 普通的正常流程代码,命令式代码:
+     * 我点击按钮 -> 我要执行插入元素
+     *  */
+    const insertElement = (struct) => {
+        const ul = document.getElementById("ul1");
+        const li = document.createElement("li");
+        li.innerText = `第${struct}项`;
+        ul.appendChild(li);
+    };
+    const btn1 = document.getElementById("btn1");
+    let count = 0;
+
+    btn1.addEventListener('click', () => {
+        insertElement(++count);
+    });
+</script>
+<script type="text/javascript">
+    /**
+     * 观察者模式代码
+     * 1. 先创建可观察对象
+     * 2. 先行注册回调函数, 函数内容为插入DOM元素
+     * 3. 按钮点击时, 使用可观察对象派发一个值
+     * */
+    class MySubject {
+        /**
+         * 虚拟ID(当随机数使用)
+         * */
+        mockId = 0;
+        /**
+         * 已订阅的观察者列表
+         * */
+        subscriptionList = [];
+
+        /**
+         * 观察者使用此函数注册一个观察回调
+         * */
+        subscribe(callback) {
+            const thisId = ++this.mockId;
+            this.subscriptionList.push({
+                id: thisId,
+                callback
+            });
+        }
+
+        /**
+         * 使用者使用此函数派发一个值
+         * */
+        next(value) {
+            this.subscriptionList.forEach(item => {
+                item.callback(value);
+            });
+        }
+    }
+
+    const MySubjectInstance = new MySubject();
+
+    const insertElementBySubject = (struct) => {
+        const ul = document.getElementById("ul2");
+        const li = document.createElement("li");
+        li.innerText = `第${struct}项`;
+        ul.appendChild(li);
+    };
+
+    // 先注册观察回调
+    MySubjectInstance.subscribe((nextValue) => {
+        insertElementBySubject(nextValue);
+    });
+
+
+    const btn2 = document.getElementById("btn2");
+    let count2 = 0;
+
+    // 派发值按钮
+    btn2.addEventListener('click', () => {
+        // 再派发值
+        MySubjectInstance.next(++count2);
+    });
+</script>
+</html>

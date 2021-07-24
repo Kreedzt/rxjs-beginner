@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>自己实现一个简易的 Subject </title>
+</head>
+<body>
+    <div>
+        <h2>
+            观察者模式
+        </h2>
+        <button id="btn2">
+            按钮2-观察者模式-派发一个值
+        </button>
+        <button id="btn2-cancel">
+            按钮2-观察者模式-取消订阅
+        </button>
+        <button id="btn2-reSubscribe">
+            按钮2-观察者模式-重新订阅
+        </button>
+        <ul id="ul2">
+            展现列表-观察者模式
+        </ul>
+
+    </div>
+</body>
+
+<script type="text/javascript">
+    /**
+     * 观察者模式代码
+     * 1. 先创建可观察对象
+     * 2. 先行注册回调函数, 函数内容为插入DOM元素
+     * 3. 按钮点击时, 使用可观察对象派发一个值
+     * */
+    class MySubject {
+        /**
+         * 虚拟ID(当随机数使用)
+         * */
+        mockId = 0;
+        /**
+         * 已订阅的观察者列表
+         * */
+        subscriptionList = [];
+
+        /**
+         * 观察者使用此函数注册一个观察回调
+         * */
+        subscribe(callback) {
+            const thisId = ++this.mockId;
+            this.subscriptionList.push({
+                id: thisId,
+                callback
+            });
+
+            /**
+             * 返回一个可以销毁订阅的函数
+             * */
+            return {
+                unsubscribe: () => {
+                    this.subscriptionList = this.subscriptionList.filter(item => item.id !== thisId);
+                }
+            }
+        }
+
+        /**
+         * 使用者使用此函数派发一个值
+         * */
+        next(value) {
+            this.subscriptionList.forEach(item => {
+                item.callback(value);
+            });
+        }
+    }
+
+    const MySubjectInstance = new MySubject();
+
+    const insertElementBySubject = (struct) => {
+        const ul = document.getElementById("ul2");
+        const li = document.createElement("li");
+        li.innerText = `第${struct}项`;
+        ul.appendChild(li);
+    };
+
+    // 先注册观察回调
+    let subscription = MySubjectInstance.subscribe((nextValue) => {
+        insertElementBySubject(nextValue);
+    });
+
+
+    const btn2 = document.getElementById("btn2");
+    let count2 = 0;
+
+    // 派发值按钮
+    btn2.addEventListener('click', () => {
+        // 再派发值
+        MySubjectInstance.next(++count2);
+    });
+
+    // 取消按钮
+    const btn2Cancel = document.getElementById("btn2-cancel");
+    btn2Cancel.addEventListener('click', () => {
+        // 取消订阅
+        subscription.unsubscribe();
+    });
+
+    // 重新订阅按钮
+    const btn2ReSubscribe = document.getElementById("btn2-reSubscribe");
+    btn2ReSubscribe.addEventListener('click', () => {
+        // 重新订阅
+        subscription = MySubjectInstance.subscribe(next => {
+            insertElementBySubject(next);
+        });
+    });
+</script>
+</html>

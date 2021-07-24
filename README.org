@@ -1,0 +1,162 @@
+#+TITLE: Rxjs初学者入门
+
+前置知识:
+1. 了解原生 DOM API 的创建元素与选择器
+2. 了解 ES6: class, 简写变量值
+3. 了解 react-hooks
+
+* Rxjs 初学者入门
+** 入门篇
+*** 为何需要观察者模式
+本节代码文件: [[./0-why-need-observer/index.html]]
+
+**** 命令式
+*顺序执行*
+执行流程:
+1. 点击按钮
+2. 按钮点击后添加 DOM 元素
+
+   核心代码:
+ #+begin_src js
+const btn1 = document.getElementById("btn1");
+let count = 0;
+
+btn1.addEventListener('click', () => {
+    insertElement(++count);
+});
+ #+end_src
+
+**** 观察者模式
+*订阅先行*
+1. 创建一个简易的可观察对象
+2. 先行订阅回调函数
+3. 点击按钮, 派发事件
+4. 可观察对象自动去派发(无实际调用)
+
+执行流程:
+1. 可观察对象提供订阅方法, 使用者去注册一个订阅, 传入回调函数
+2. 派发者任意时刻都可以去派发值
+3. 当可观察对象接受到派发值, 执行使用者注册的回调函数
+
+   核心代码:
+   #+begin_src js
+class MyObserver {
+    // 内部省略, 见文件详细代码
+}
+
+// 实例化一个可观察对象
+const MyObserverInstance = new MyObserver();
+
+// 先注册观察回调
+let subscription = MyObserverInstance.subscribe((nextValue) => {
+    insertElementByObserver(nextValue);
+});
+
+
+const btn2 = document.getElementById("btn2");
+let count2 = 0;
+
+// 派发值按钮
+btn2.addEventListener('click', () => {
+    // 再派发值
+    MyObserverInstance.next(++count2);
+});
+   #+end_src
+
+优势:
+1. 所有的派发与订阅都在一个对象上, 该对象可视为代理, 而不是直接 a->b 的一级操作, 结构清晰
+2. 可观察对象可以在任意位置任意注册订阅
+3. 可观察提供了通用的取消订阅方法(见代码)
+
+*** rxjs的两大核心数据类型
+**** Observer
+该类型为可观察对象, 我们使用 rx 时必须要创建一个可观察对象
+
+如何创建可观察对象:
+1. 从DOM事件创建可观察对象: ~fromEvent()~
+   #+begin_src js
+import { fromEvent } from "rxjs/observable/fromEvent";
+
+const observable = fromEvent(document, 'mousemove');
+
+const subscription = observable.subscribe(
+    (x) => {
+        console.log('nextValue', x);
+    };
+)
+   #+end_src
+
+2. 从js数据创建可观察对象: ~of()~
+#+begin_src js
+import { of } from 'rxjs';
+
+const observableArr = of([1, 2, 3]).subscribe(next => console.log(next));
+// 输出: [1, 2, 3]
+
+const observableMultiValue = of(1, 2, 3).subscribe(next => console.log(next));
+// 输出:
+// 1
+// 2
+// 3
+#+end_src
+
+创建后的可观察对象具有的核心函数:
+1. 派发值: ~next()~ 方法
+   Tips:
+   1. 除了正常派发一个值, 还可以调用 ~completed()~ 表明已完成, 后继的 ~next()~ 不会通知订阅者, 订阅者可以接收是否完成.
+   2. 还可以派发一个异常出去: ~error()~, 订阅者可以接收是否出错.
+2. 订阅: ~subscribe()~ 方法, 此方法返回的对象具有 ~unsubscripe()~ 取消订阅功能
+
+**** Subscription
+该类型为订阅者, 提供了取消订阅的方法, 通过 ~Observer.subscribe()~ 创建而来)
+*** 自己实现一个简易的 Subject
+本节代码文件: [[./1-mock-subject/index.html]]
+rxjs 的 Subject 特性:
+1. 继承了通用的 Observable 类型, 具有订阅, 取消订阅, 派发值功能
+2. Subject 具有 *可先订阅, 后执行的特点*
+
+*** 为何需要取消订阅
+观察上一节代码:
+在订阅时:
+访问 ~MySubject~ 的 ~SubscriptionList~, 此时数组存在一项.
+若另一处也订阅, ~SubscriptionList~ 会新增一项.
+每次调用 ~subscribe()~ 都会新增一项到订阅列表.
+
+若不在不适用时取消订阅, 或者重复订阅时不取消订阅. 会导致订阅列表有些无效项, 在派发时给这些无效的回调函数就做了无用功.
+
+*要明确的取消订阅, 保证订阅列表注册的都是有效项*
+
+*** rxjs 提供了什么额外功能
+*操作符*: 学 rxjs 就是学习操作符, 普通的 Subject 与自己实现的简易并无区别.
+
+见一个略微复杂的例子:
+#+begin_src js
+let search =
+    keyPresses
+        .debounceTime(250)
+        .map(key =>
+            getJSON('/search?q=' + input.value)
+                .retry(3)
+                .takeUntil(keyPresses)
+        )
+        .concatAll()
+search.forEach(
+    results => updateUI(results),
+    error => showMessage(error)
+)
+#+end_src
+
+以上代码做了如下操作:
+#+begin_example
+keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
+
+1. 按下键盘
+2. 经过防抖 250 毫秒
+3. 请求接口, 获取数据, 最多重试 3 次,
+4. 当接收到第二次按下键盘时, 废弃/停止当期请求
+5. 合并所有流
+#+end_example
+
+** 在 react 中使用
+*** 在组件中使用
+** 如何学习 rxjs
