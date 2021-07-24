@@ -100,6 +100,8 @@ const observableMultiValue = of(1, 2, 3).subscribe(next => console.log(next));
 // 3
 #+end_src
 
+3. 使用 rxjs 的对象创建: ~Observable.create()~, ~new Subject()~ 等
+
 创建后的可观察对象具有的核心函数:
 1. 派发值: ~next()~ 方法
    Tips:
@@ -128,6 +130,11 @@ rxjs 的 Subject 特性:
 
 *** rxjs 提供了什么额外功能
 *操作符*: 学 rxjs 就是学习操作符, 普通的 Subject 与自己实现的简易并无区别.
+
+所有的操作符都可以 *直接使用*, 也可以 *在管道中使用(推荐使用此方式)*:
+
+只需要在订阅可观察对象前调用即可.
+
 
 见一个略微复杂的例子:
 #+begin_src js
@@ -158,5 +165,32 @@ keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
 #+end_example
 
 ** 在 react 中使用
-*** 在组件中使用
+*** 全局的 Subject
+核心代码目录: [[./2-rxjs-in-react/src/1-global-subject/]]
+
+使用全局的 Subject 要注意取消订阅
+
+*** 局部的 Subject
+核心代码目录: [[./2-rxjs-in-react/src/2-scope-subject/]]
+
+局部的 Subject 可以让 GC 自动释放
+
+防抖示例: [[./2-rxjs-in-react/src/3-with-pipe-subject/]]
 ** 如何学习 rxjs
+*** 引言文章推荐
+- [[https://zhuanlan.zhihu.com/p/34481617][Rx.js 思想入门（讲义）]]
+- [[https://www.yuque.com/zhaozisong/bx8l7d/mb91gm][Rx.js 入门]]
+
+*** 正确使用文档
+[[https://rxjs.dev/][官方文档]]: 在右侧搜索想要使用的操作符即可:
+
+每个操作符说明都会有三个主要分类
+- 描述:
+  描述里的大图往往是最直观的展现方式:
+  每条线表明一个事件流, 圆圈内容表示 ~next()~ 了一次值
+
+- 示例:
+  示例描述了最简单清晰的用法, 可以在网页中的控制台直接跑代码, 暴露的名词为: ~rxjs~.
+
+- 重载(不一定有): 表明了接收的不同参数不同相应, 类似 Java 的重载
+- 相关内容(仅参考): 包括了相关的操作符等
