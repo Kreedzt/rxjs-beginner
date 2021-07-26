@@ -160,7 +160,7 @@ keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
 1. 按下键盘
 2. 经过防抖 250 毫秒
 3. 请求接口, 获取数据, 最多重试 3 次,
-4. 当接收到第二次按下键盘时, 废弃/停止当期请求
+4. 当接收到第二次按下键盘时, 废弃/停止当前请求
 5. 合并所有流
 #+end_example
 
@@ -185,7 +185,7 @@ keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
 - 相关内容(仅参考): 包括了相关的操作符等
 
 *** 演练场
-[[Rx Visualizer][Rx可视化]]: 直观的观察每次派发值
+[[https://rxviz.com/][Rx可视化]]: 直观的观察每次派发值
 ** 在 react 中使用
 *** 全局的 Subject
 核心代码目录: [[./2-rxjs-in-react/src/1-global-subject/]]
@@ -196,7 +196,27 @@ keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
 核心代码目录: [[./2-rxjs-in-react/src/2-scope-subject/]]
 
 局部的 Subject 可以让 GC 自动释放
+*** observable-hooks
+[[https://observable-hooks.js.org/zh-cn/][文档]]
 
-防抖示例: [[./2-rxjs-in-react/src/3-with-pipe-subject/]]
+该库简化了在 React 中使用 rxjs 的模板代码
+
+核心 API:
+- ~useObserable~: 创建 Observable, 可以接收一个依赖数组, 依赖数组项改变重新计算
+  + 参数1: 回调函数: 输入: 数组依赖项, 输出: 值
+  + 参数2: 依赖项, 作为参数1 的输入
+  + 返回: Observable 值
+- ~useObservableState~: 类似 useState, 但接收一个流处理，
+  + 参数1: 回调函数: 输入 ~Observable~ 输出 value
+  + 参数2: 初始值, 类型需要与参数1 返回值相同.
+  + 返回: 类似 useState 的返回. state 与 setState
+- ~useSubscription~: 自动取消订阅的函数
+  + 参数1: Observable
+  + 参数2: 回调函数(subscribe)
+
+** 一些操作符
 *** 防抖: ~debounceTime~
+防抖示例: [[./2-rxjs-in-react/src/3-with-pipe-subject/]]
+
 *** 直到下一个流触发值前，跳过前面所有值的订阅: ~skipUntil~
+*** 一直订阅，下一个流触发值后停止: ~takeUntil~
