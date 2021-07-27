@@ -198,11 +198,12 @@ keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
 局部的 Subject 可以让 GC 自动释放
 *** observable-hooks
 [[https://observable-hooks.js.org/zh-cn/][文档]]
+示例代码： [[./2-rxjs-in-react/src/4-observable-hooks-usage/]]
 
 该库简化了在 React 中使用 rxjs 的模板代码
 
 核心 API:
-- ~useObserable~: 创建 Observable, 可以接收一个依赖数组, 依赖数组项改变重新计算
+- ~useObservable~: 创建 Observable, 可以接收一个依赖数组, 依赖数组项改变重新计算
   + 参数1: 回调函数: 输入: 数组依赖项, 输出: 值
   + 参数2: 依赖项, 作为参数1 的输入
   + 返回: Observable 值
