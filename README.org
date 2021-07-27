@@ -208,12 +208,16 @@ keyPresses 是一个键盘按下事件, 此处的 demo 指的是搜索框防抖
   + 参数2: 依赖项, 作为参数1 的输入
   + 返回: Observable 值
 - ~useObservableState~: 类似 useState, 但接收一个流处理，
-  + 参数1: 回调函数: 输入 ~Observable~ 输出 value
-  + 参数2: 初始值, 类型需要与参数1 返回值相同.
+  + 参数1: ~Observable~
+  + 参数2: 初始值, 类型需要与参数1 ~Observable~ 返回值相同.
   + 返回: 类似 useState 的返回. state 与 setState
 - ~useSubscription~: 自动取消订阅的函数
   + 参数1: ~Observable~
   + 参数2: 回调函数(subscribe)
+- ~useObservableCallback~: 返回一个回调函数和一个 ~Observable~
+  + 参数1: 回调函数: 输入 ~Observable~ 输出 ~Observable~
+  + 参数2: 函数: 选择器， 回调函数每次接收的所有参数将作为数组交给这个函数, 返回的值类型与整体返回的第二个参数类型相同
+  + 返回: [普通函数, ~Observable~ ]
 
 ** 一些操作符
 *** 防抖: ~debounceTime~
