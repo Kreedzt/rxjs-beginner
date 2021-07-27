@@ -3,6 +3,7 @@ import GlobalSubject from './1-global-subject/GlobalSubject';
 import ScopeSubject from './2-scope-subject/ScopeSubject';
 import WithPipeSubject from './3-with-pipe-subject/WithPipeSubject';
 import ObservableHooksUsage from './4-observable-hooks-usage/ObservableHooksUsage';
+import TakeUntilAndSkipUntil from './5-takeUntilAndSkipUntil/TakeUntilAndSkipUntil';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           <ScopeSubject />
           <WithPipeSubject />
           <ObservableHooksUsage />
+          <TakeUntilAndSkipUntil />
       </div>
   );
 }
