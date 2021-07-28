@@ -1,7 +1,7 @@
-import React, { FC, useState, useCallback, useRef } from 'react';
+import React, { FC, useState } from 'react';
 import { useObservable, useObservableState, useSubscription, useObservableCallback } from 'observable-hooks';
 import { takeUntil, skipUntil } from 'rxjs/operators';
-import { interval, Subject } from 'rxjs';
+import { interval } from 'rxjs';
 
 const TakeUntilAndSkipUntil: FC = () => {
     const [stopRecord, stopRecord$] = useObservableCallback($input => $input);
