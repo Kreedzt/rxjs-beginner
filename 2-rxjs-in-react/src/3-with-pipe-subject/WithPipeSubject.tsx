@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useRef, useCallback } from 'react';
 import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
 
 const WithPipeSubject: FC = () => {
     const [searchText, setSearchText] = useState<string | undefined>('');
@@ -13,7 +13,12 @@ const WithPipeSubject: FC = () => {
     }, []);
 
     useEffect(() => {
-        subjectInstance.current?.pipe(debounceTime(200)).subscribe((next) => {
+        subjectInstance.current?.pipe(
+            tap(() => {
+                console.log('this is tap');
+            }),
+            debounceTime(200),
+        ).subscribe((next) => {
             setValueFromSubject(next);
         });
     }, []);

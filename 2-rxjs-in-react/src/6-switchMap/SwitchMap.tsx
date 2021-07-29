@@ -10,19 +10,20 @@ import {
     switchMap,
     take,
     scan,
-    tap
+    tap,
+    delay,
 } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { interval, of } from 'rxjs';
 
 const SwitchMap: FC = () => {
     const [start, start$] = useObservableCallback((input$) => input$);
     const [stopRecord, stopRecord$] = useObservableCallback((input$) => input$);
 
-    const time1000$ = useObservable(
+    const time2000$ = useObservable(
         () =>
-            interval(1000).pipe(
+            interval(2000).pipe(
                 skipUntil(start$),
-                tap(() => console.log('interval 1000')),
+                tap(() => console.log('interval 2000')),
             ),
         [],
     );
@@ -37,11 +38,11 @@ const SwitchMap: FC = () => {
 
     const [listenTimes] = useObservableState(
         (input$, initialState) =>
-            time1000$.pipe(
-                take(3),
+            time2000$.pipe(
+                /* take(3), */
                 // switchMap 销毁上一次 switchMap 的 Observable
                 // 所以只会存在一个定时器
-                switchMap(() => time500$),
+                switchMap(() => interval(2000)),
                 scan((acc, currentValue) => {
                     console.log('acc', acc, 'currentValue', currentValue);
                     return acc + 1;

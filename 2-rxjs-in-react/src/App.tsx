@@ -10,12 +10,12 @@ import MergeMap from './7-mergeMap/MergeMap';
 function App() {
   return (
       <div className="App">
-          <GlobalSubject />
-          <ScopeSubject />
-          <WithPipeSubject />
-          <ObservableHooksUsage />
-          <TakeUntilAndSkipUntil />
-          <SwitchMap />
+          {/* <GlobalSubject /> */}
+          {/* <ScopeSubject /> */}
+          {/* <WithPipeSubject /> */}
+          {/* <ObservableHooksUsage /> */}
+          {/* <TakeUntilAndSkipUntil /> */}
+          {/* <SwitchMap /> */}
           <MergeMap />
       </div>
   );

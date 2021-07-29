@@ -5,7 +5,7 @@ import {
     useSubscription,
     useObservableCallback,
 } from 'observable-hooks';
-import { takeUntil, skipUntil, scan } from 'rxjs/operators';
+import { takeUntil, skipUntil, scan, tap } from 'rxjs/operators';
 import { interval } from 'rxjs';
 
 const TakeUntilAndSkipUntil: FC = () => {
@@ -24,6 +24,7 @@ const TakeUntilAndSkipUntil: FC = () => {
         (input$, initialState) =>
             event$.pipe(
                 takeUntil(stopRecord$),
+                tap(() => console.log('listenTimes tap!')),
                 scan((acc, currentValue) => acc + 1, 0),
             ),
         0,

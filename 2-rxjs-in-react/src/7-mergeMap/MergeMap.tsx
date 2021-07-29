@@ -18,11 +18,11 @@ const MergeMap: FC = () => {
     const [start, start$] = useObservableCallback((input$) => input$);
     const [stopRecord, stopRecord$] = useObservableCallback((input$) => input$);
 
-    const time1000$ = useObservable(
+    const time2000$ = useObservable(
         () =>
-            interval(1000).pipe(
+            interval(2000).pipe(
                 skipUntil(start$),
-                tap(() => console.log('interval 1000')),
+                tap(() => console.log('interval 2000')),
                 scan((acc) => acc + 1, 0),
             ),
         [start$],
@@ -30,7 +30,7 @@ const MergeMap: FC = () => {
 
     const [listenTimes] = useObservableState(
         (input$, initialState) =>
-            time1000$.pipe(
+            time2000$.pipe(
                 // mergeMap 始终合并到新的 Observable
                 /* mergeMap((nextValue) =>
                  *     of(nextValue).pipe(
